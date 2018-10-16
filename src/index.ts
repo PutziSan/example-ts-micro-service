@@ -1,5 +1,5 @@
-import { IncomingMessage, ServerResponse } from "http";
 import { get, post } from "got";
+import { IncomingMessage, ServerResponse } from "http";
 import { send } from "micro";
 
 async function testGotGet() {
@@ -24,10 +24,10 @@ async function testGotPost() {
 
 async function handleRequest(method: string) {
   switch (method) {
-    case 'GET':
-      return await testGotGet();
-    case 'POST':
-      return await testGotPost();
+    case "GET":
+      return testGotGet();
+    case "POST":
+      return testGotPost();
     default:
       throw new Error(`unknown method: ${method}`);
   }

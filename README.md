@@ -2,10 +2,6 @@
 
 Beispiel wie micro-services mittels [micro](https://github.com/zeit/micro) implementiert werden können.
 
-ToDos:
-
-- Deployment mit [now](https://zeit.co/now) muss noch dokumentiert werden.
-
 ## dev
 
 pre-requirements:
@@ -17,6 +13,34 @@ yarn global add concurrently
 ### `yarn dev`
 
 startet den [micro-dev](https://github.com/zeit/micro-dev)-server und parallel den TypeScript-watch-prozess (`tsc -w`).
+
+### `yarn build`
+
+
+1. set the `NODE_ENV=production` via [cross-env](https://github.com/kentcdodds/cross-env)
+1. 
+
+#### build-script im Zusammenhang mit now-deployment
+
+~~Es ist wichtig dass `NODE_ENV=production` (da dadurch doch die devDependencies installiert werden) im `build`-script gesetzt wird, da `now.json`-`env`-Option mit `"NODE_ENV": "production"` gesetzt wird, installiert now eigentlich keine devDependencies: siehe [Ignoring devDependencies (now-doku)](https://zeit.co/docs/deployment-types/node#ignoring-devdependencies).~~
+
+NODE_ENV wird zu production bei start-script gesetzt, da sonst build-script nicht funktioniert.
+
+### now as deploy-server
+
+Es ist zu überlegen ob now den build-step übernehmen soll ([now führt automatisch das `package.json."build"`-script aus](https://zeit.co/docs/deployment-types/node#file-system-specifications)), oder man einen externen build-server (gitlab-ci etc) nutzen will
+
+Zum Anfang ist now sicherlich einfacher, hat aber Nachteile:
+
+- devDependencies müssen mit installiert werden
+- kompilierter src-code wird hochgeladen
+- build-step ist limitert (da eigentlich nur build möglich ist)
+
+mit jenkins/gitlab-ci/circle-ci/... könnte man da mehr und besser steuern und würde dann nur die fertige app hochladen. Idee-Ansatz
+
+- use the [Selecting Files and Directories to Be Uploaded](https://zeit.co/docs/clients/now-cli#selecting-files-and-directories-to-be-uploaded)-feature von now => `"files": ["dist"]` (zu checken pb package.json und now.json eigtl auch hinzugefügt werden müssten?)
+- dann sollte auch wieder `now.json."env"` genutzt werden um `process.env.NODE_ENV` auf `production` zu setzen, dann wird ausschließlich die für prodcution wichtigen packages installiert (nicht devDependencies): [Ignoring devDependencies (now-doku)] 
+
 
 ## configs
 
